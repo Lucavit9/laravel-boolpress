@@ -72,11 +72,12 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($post)
+    public function show($id)
     {
         //
 
-        if (!$post) {
+        $post = Post::find($id);
+        if (!$id) {
             abort(404);
         }
         return view('admin.posts.show', compact('post'));
