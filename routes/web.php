@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,9 +27,10 @@ Route::middleware('auth')
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
-        Route::get('/', 'HomeController@index')
-            ->name('home');
+        Route::get('/', 'HomeController@index')->name('index');
+        Route::resource('/posts', 'PostController');
     });
+
 
 Route::get("{any?}", function () {
     return view('guest.home');
