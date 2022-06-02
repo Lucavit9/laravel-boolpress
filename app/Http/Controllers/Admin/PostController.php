@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
-
+use Illuminate\Http\Request;
 use App\Post;
-use Symfony\Component\Mime\Part\Multipart\AlternativePart;
+use App\Category;
 
 class PostController extends Controller
 {
@@ -19,8 +17,6 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
-
         $posts = Post::all();
         return view('admin.posts.index', compact('posts'));
     }
@@ -32,9 +28,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
-
-        return view('admin.posts.create');
+        $categories = Category::all();
+        return view('admin.posts.create', compact('categories'));
     }
 
     /**
@@ -45,23 +40,34 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
-
-        $request->validate([
-            'title' => 'required|max:250',
-            'content' => 'required|min:5|max:100'
-        ], [
-            'title.required' => 'Ttitolo deve essere valorizzato',
-            'title.max' => 'Hai superato i :attribute caratteri',
-            'content.min' => 'Minimo 5 caratteri'
-
-        ]);
+        $request->validate(
+            [
+                'title' => 'required|max:255',
+                'content' => 'required|min:8',
+                'category_id' => 'required|exists:categories,id' //il valore di category o è nullo, o esiste nella tabella
+            ],
+            // L'array sottostante equivale ad un messaggio di errore personalizzato,
+            // Lo si può utilizzare per cambiare il soggetto dell'errore es 'name.required' => 'The name field is required.'
+            [
+                'title.required' => 'LoL, you forgot the title.',
+                'content.min' => "C'mon man, you're almost there!",
+                'content.required' => 'LoL, you also forgot the content.',
+                'category_id.required' => "Try again, this category doesn't exist."
+            ]
+        );
         $postData = $request->all();
         $newPost = new Post();
         $newPost->fill($postData);
-
-        $newPost->slug = Post::convertToSlug($newPost->title);
-
+        $slug = Str::slug($newPost->title);
+        $alternativeSlug = $slug;
+        $postFound = Post::where('slug', $alternativeSlug)->first();
+        $counter = 1;
+        while ($postFound) {
+            $alternativeSlug = $slug . '_' . $counter;
+            $counter++;
+            $postFound = Post::where('slug', $alternativeSlug)->first();
+        }
+        $newPost->slug = $alternativeSlug;
         $newPost->save();
         return redirect()->route('admin.posts.index');
     }
@@ -74,13 +80,9 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
-
         $post = Post::find($id);
-        if (!$id) {
-            abort(404);
-        }
-        return view('admin.posts.show', compact('post'));
+        $category = Category::find($post->category_id);
+        return view('admin.posts.show', compact('post', 'category'));
     }
 
     /**
@@ -89,14 +91,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit($id)
     {
-        //
-
-        if (!$post) {
-            abort(404);
-        }
-        return view('admin.posts.edit', compact('post'));
+        $post = Post::find($id);
+        $categories = Category::all();
+        return view('admin.posts.edit', compact('post', 'categories'));
     }
 
     /**
@@ -108,19 +107,35 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
-
-        $request->validate([
-            'title' => 'required|max:250',
-            'content' => 'required',
-        ]);
+        $request->validate(
+            [
+                'title' => 'required|max:255',
+                'content' => 'required|min:8',
+                'category_id' => 'required|exists:categories,id'
+            ],
+            // L'array sottostante equivale ad un messaggio di errore personalizzato,
+            // Lo si può utilizzare per cambiare il soggetto dell'errore es 'name.required' => 'The name field is required.'
+            [
+                'title.required' => 'LoL, you forgot the title.',
+                'content.min' => "C'mon man, you're almost there!",
+                'content.required' => 'LoL, you also forgot the content.',
+                'category_id.exists' => "Try again, this category doesn't exist."
+            ]
+        );
         $postData = $request->all();
-
         $post->fill($postData);
-        $post->slug = Post::convertToSlug($post->title);
-
+        $slug = Str::slug($post->title);
+        $alternativeSlug = $slug;
+        $postFound = Post::where('slug', $alternativeSlug)->first();
+        $counter = 1;
+        while ($postFound) {
+            $alternativeSlug = $slug . '_' . $counter;
+            $counter++;
+            $postFound = Post::where('slug', $alternativeSlug)->first();
+        }
+        $post->slug = $alternativeSlug;
         $post->update();
-        return redirect()->route('admin.posts.index',);
+        return redirect()->route('admin.posts.index');
     }
 
     /**
@@ -129,12 +144,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-
-        if ($post) {
-            $post->delete();
-        }
-        return redirect()->route('admin.posts.index');
+        $post = Post::find($id);
+        $post->delete();
+        return redirect()->route('admin.posts.index', compact('post'));
     }
 }
