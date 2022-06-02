@@ -20,7 +20,7 @@ class AddForeignPostsTable extends Migration
 
             $table->foreign('category_id')
                 ->references('id')
-                ->on('users');
+                ->on('categories')->setDelete('set null');
         });
     }
 
