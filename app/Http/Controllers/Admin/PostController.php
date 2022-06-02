@@ -46,12 +46,10 @@ class PostController extends Controller
                 'content' => 'required|min:8',
                 'category_id' => 'required|exists:categories,id' //il valore di category o è nullo, o esiste nella tabella
             ],
-            // L'array sottostante equivale ad un messaggio di errore personalizzato,
-            // Lo si può utilizzare per cambiare il soggetto dell'errore es 'name.required' => 'The name field is required.'
             [
-                'title.required' => 'LoL, you forgot the title.',
-                'content.min' => "C'mon man, you're almost there!",
-                'content.required' => 'LoL, you also forgot the content.',
+                'title.required' => 'you forgot the title.',
+                'content.min' => "you're almost there!",
+                'content.required' => 'you also forgot the content.',
                 'category_id.required' => "Try again, this category doesn't exist."
             ]
         );
@@ -86,7 +84,6 @@ class PostController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -113,12 +110,11 @@ class PostController extends Controller
                 'content' => 'required|min:8',
                 'category_id' => 'required|exists:categories,id'
             ],
-            // L'array sottostante equivale ad un messaggio di errore personalizzato,
-            // Lo si può utilizzare per cambiare il soggetto dell'errore es 'name.required' => 'The name field is required.'
+
             [
-                'title.required' => 'LoL, you forgot the title.',
-                'content.min' => "C'mon man, you're almost there!",
-                'content.required' => 'LoL, you also forgot the content.',
+                'title.required' => 'you forgot the title.',
+                'content.min' => "you're almost there!",
+                'content.required' => 'you also forgot the content.',
                 'category_id.exists' => "Try again, this category doesn't exist."
             ]
         );

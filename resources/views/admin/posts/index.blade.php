@@ -9,8 +9,6 @@
                     <a href="{{ route('admin.posts.create') }}" class="btn btn-info"> Add new Post</a>
 
                 </div>
-                {{-- Creo una tabella per mettere gli attributi al di sotto dei titoli adatti, so che non bisognerebbe farla ma non mi viene in mente nient'altro --}}
-
                 <table class="table">
                     <thead>
                         {{-- Table title --}}

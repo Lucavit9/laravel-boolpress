@@ -41,10 +41,8 @@
                                 <select name="category_id" class=" @error('category_id') is-invalid @enderror">
                                     <option value="">Choose Category</option>
                                     @foreach ($categories as $category)
-                                        {{-- Category id è selezionato? se si  me lo fa vedere se è no rimane vuoto --}}
                                         <option value="{{ $category->id }}"
                                             {{ $category->id == old('category_id', $post->category_id) ? 'selected' : '' }}>
-                                            {{-- Se non inserisco il secondo valore su old, mi rimane quello di default --}}
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
