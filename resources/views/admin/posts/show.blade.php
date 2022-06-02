@@ -1,22 +1,38 @@
 @extends('layouts.dashboard')
 @section('content')
-    <div>
-        {{-- LINK ALLA PAGINA DI EDIT POST --}}
-        <a href="{{ route('admin.posts.edit', $post->id) }}">
-            <i class="fas fa-edit fa-2xl mx-3"></i>
-        </a>
-        {{-- BUTTON PER CANCELLARE UN POST --}}
-        <form action="{{ route('admin.posts.destroy', $post->id) }}" method="post" class=" d-inline-block">
-            @csrf
-            @method('DELETE')
-            <button type='submit' onclick="return confirm('Sicuro di voler cancellare questo post?')" type="submit" value=""
-                class="btn btn-danger">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        </form>
-    </div>
-    <div class="mt-3">
-        <h3>{{ $post->title }}</h3>
-        <p>{{ $post->content }}</p>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1>View post {{$post->id}}</h1>
+                    <a href="{{route('admin.posts.index')}}" class="btn btn-info">All Posts</a>
+                </div>
+                {{-- Contenuti --}}
+                <dl>
+                    <dt>Title:</dt>
+                    <dd>{{$post->title}}</dd>
+                    <dt>Slug:</dt>
+                    <dd>{{$post->slug}}</dd>
+                    <dt>Category:</dt>
+                    <dd>{{$category->name}}</dd>
+                    <dt>Content:</dt>
+                    <dd>{{$post->content}}</dd>
+                </dl>
+                <dl>
+                {{--/ Contenuti --}}
+
+                    <a href="{{route('admin.posts.edit', $post->id)}}" class="btn btn-outline-info">Edit</a>
+                    <form action="{{route('admin.posts.destroy' ,  $post->id)}}" method="POST" class="d-inline-block ">
+                        @csrf
+                            @method('DELETE')
+
+                            <button class="btn btn-danger" onclick="return confirm('Are you sure you wanna delete the Post?');">
+                                Delete
+                            </button>
+                    </form>
+                </dl>
+
+            </div>
+        </div>
     </div>
 @endsection

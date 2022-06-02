@@ -30,18 +30,19 @@
                                 <td>{{ $post->title }}</td>
                                 <td>{{ $post->slug }}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('admin.posts.show', $post->id) }}">
-                                        <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST"
-                                            class="d-inline-block ">
-                                            @csrf
-                                            @method('DELETE')
+                                    <a href="{{ route('admin.posts.show', $post->id) }}" class="btn btn-outline-info">View
 
-                                            <button class="btn btn-danger"
-                                                onclick="return confirm('Are you sure you wanna delete the Post?');">
-                                                Delete
-                                            </button>
-                                        </form>
                                     </a>
+                                    <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST"
+                                        class="d-inline-block ">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button class="btn btn-danger"
+                                            onclick="return confirm('Are you sure you wanna delete the Post?');">
+                                            Delete
+                                        </button>
+                                    </form>
                                     <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-outline-info">
                                         Edit
 
