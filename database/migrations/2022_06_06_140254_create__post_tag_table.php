@@ -32,6 +32,6 @@ class CreatePostTagTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('_post_tag');
+        Schema::dropIfExists('post_tag');
     }
 }
