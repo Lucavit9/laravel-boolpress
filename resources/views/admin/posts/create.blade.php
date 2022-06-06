@@ -61,6 +61,22 @@
                                 @enderror
                             </div>
                             {{-- / content post --}}
+                            <div class="form-group">
+                                <h2 for="content">Tags:</h2>
+                                @foreach ($tags as $tag)
+                                    <input class="form-check-input" type="checkbox" value="{{ $tag->id }}"
+                                        name="tags[]" {{ in_array($tag->id, old('tags', [])) ? 'checked' : '' }} />
+                                    <div class="form-check-label">{{ $tag->name }}</div>
+                                @endforeach
+                                @error('tags')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+
+
 
                             <div class="form-group">
                                 <input type="submit" class="btn btn-info white" value="Create Post">

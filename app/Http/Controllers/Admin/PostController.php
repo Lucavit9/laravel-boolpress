@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Post;
 use App\Category;
+use App\Tag;
 
 class PostController extends Controller
 {
@@ -29,7 +30,9 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.posts.create', compact('categories'));
+
+        $tags = Tag::all();
+        return view('admin.posts.create', compact('categories', 'tags'));
     }
 
     /**
@@ -44,13 +47,15 @@ class PostController extends Controller
             [
                 'title' => 'required|max:255',
                 'content' => 'required|min:8',
-                'category_id' => 'required|exists:categories,id'
+                'category_id' => 'required|exists:categories,id',
+                'tags[]' => 'exists:tags,id'
             ],
             [
                 'title.required' => 'you forgot the title.',
                 'content.min' => "you're almost there!",
                 'content.required' => 'you also forgot the content.',
-                'category_id.required' => "Try again, this category doesn't exist."
+                'category_id.required' => "Try again, this category doesn't exist.",
+                'tags[]' => 'tag non esiste'
             ]
         );
         $postData = $request->all();
@@ -66,6 +71,18 @@ class PostController extends Controller
             $postFound = Post::where('slug', $alternativeSlug)->first();
         }
         $newPost->slug = $alternativeSlug;
+
+        $newPost->save();
+
+        //aggiungo tags
+
+        if (array_key_exists('tags', $postData)) {
+
+            // dd($postData['tags']);
+            $newPost->tags()->sync($postData['tags']);
+        }
+
+
         $newPost->save();
         return redirect()->route('admin.posts.index');
     }
@@ -92,7 +109,9 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         $categories = Category::all();
-        return view('admin.posts.edit', compact('post', '   '));
+
+        $tags = Tag::all();
+        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
     }
 
     /**
@@ -130,6 +149,12 @@ class PostController extends Controller
             $postFound = Post::where('slug', $alternativeSlug)->first();
         }
         $post->slug = $alternativeSlug;
+
+        if (array_key_exists('tags', $postData)) {
+
+            // dd($postData['tags']);
+            $post->tags()->sync($postData['tags']);
+        }
         $post->update();
         return redirect()->route('admin.posts.index');
     }
@@ -140,10 +165,14 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        $post = Post::find($id);
-        $post->delete();
-        return redirect()->route('admin.posts.index', compact('post'));
+
+        if ($post) {
+            $post->tags()->sync([]);
+            $post->delete();
+        }
+
+        return redirect()->route('admin.posts.index');
     }
 }
