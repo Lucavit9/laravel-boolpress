@@ -44,7 +44,7 @@ class PostController extends Controller
             [
                 'title' => 'required|max:255',
                 'content' => 'required|min:8',
-                'category_id' => 'required|exists:categories,id' //il valore di category o è nullo, o esiste nella tabella
+                'category_id' => 'required|exists:categories,id'
             ],
             [
                 'title.required' => 'you forgot the title.',
@@ -92,7 +92,7 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         $categories = Category::all();
-        return view('admin.posts.edit', compact('post', 'categories'));
+        return view('admin.posts.edit', compact('post', '   '));
     }
 
     /**
