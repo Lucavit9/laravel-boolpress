@@ -14,7 +14,9 @@
                                 {{ session('status') }}
                             </div>
                         @endif
-                        Benvenuto {{ Auth::user()->name }}
+
+
+                        Benvenuto,  {{ Auth::user()->name }}
                         {{ __('hai effettuato il login!') }}
                     </div>
                 </div>
