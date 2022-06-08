@@ -91,7 +91,7 @@
                         </form>
                     </div>
                 </div>
-                <a href="{{ route('admin.posts.index') }}" class="btn btn-success"> Back</a>
+                <a href="{{ route('admin.posts.index') }}" class="btn btn-success"> Back.</a>
 
             </div>
         </div>
