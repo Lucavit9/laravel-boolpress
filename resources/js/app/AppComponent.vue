@@ -1,13 +1,19 @@
 <template>
   <div>
-    WORK WORK WORK
+    <HeaderComponent />
+
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import HeaderComponent from "../components/HeaderComponent.vue";
+
 export default {
   name: "AppComponent",
+  components: {
+    HeaderComponent,
+  },
 };
 </script>
 
