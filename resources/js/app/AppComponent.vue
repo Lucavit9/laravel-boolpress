@@ -1,5 +1,8 @@
 <template>
-  <div>ciao</div>
+  <div>
+    WORK WORK WORK
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
@@ -8,4 +11,5 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+</style>
