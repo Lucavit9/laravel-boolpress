@@ -37231,7 +37231,7 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("prova")])
+  return _c("div", [_vm._v("ciao")])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -37588,7 +37588,7 @@ var app = new Vue({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\lucav\Desktop\Boolean_Project\PHP\laravel-api\resources\js\front-app.js */"./resources/js/front-app.js");
+module.exports = __webpack_require__(/*! C:\Users\lucav\Desktop\Boolean_Project\PHP\laravel-boolpress\resources\js\front-app.js */"./resources/js/front-app.js");
 
 
 /***/ })
