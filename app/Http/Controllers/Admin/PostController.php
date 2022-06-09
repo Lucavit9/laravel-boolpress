@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Post;
 use App\Category;
 use App\Tag;
@@ -19,6 +20,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
+
         return view('admin.posts.index', compact('posts'));
     }
 
@@ -30,7 +32,6 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::all();
-
         $tags = Tag::all();
         return view('admin.posts.create', compact('categories', 'tags'));
     }
@@ -48,19 +49,30 @@ class PostController extends Controller
                 'title' => 'required|max:255',
                 'content' => 'required|min:8',
                 'category_id' => 'required|exists:categories,id',
-                'tags[]' => 'exists:tags,id'
+                'tags[]' => 'exists:tags,id',
+                'image' => 'required|mimes:png,jpg|max:2048'
             ],
             [
-                'title.required' => 'you forgot the title.',
-                'content.min' => "you're almost there!",
-                'content.required' => 'you also forgot the content.',
+                'title.required' => 'LoL, you forgot the title.',
+                'content.min' => "C'mon man, you're almost there!",
+                'content.required' => 'LoL, you also forgot the content.',
                 'category_id.required' => "Try again, this category doesn't exist.",
-                'tags[]' => 'tag non esiste'
+                'tags[]' => "This tag doesn't exist",
+                'image' => 'This must be an image'
             ]
         );
         $postData = $request->all();
+        //Image
+        if (array_key_exists('image', $postData)) {
+            $img_path = Storage::put('uploads', $postData['image']);
+            $postData['cover'] = $img_path;
+        }
+
         $newPost = new Post();
+        // $newPost->cover = $img_path;
         $newPost->fill($postData);
+
+        //Slug
         $slug = Str::slug($newPost->title);
         $alternativeSlug = $slug;
         $postFound = Post::where('slug', $alternativeSlug)->first();
@@ -71,17 +83,11 @@ class PostController extends Controller
             $postFound = Post::where('slug', $alternativeSlug)->first();
         }
         $newPost->slug = $alternativeSlug;
-
         $newPost->save();
-
-        //aggiungo tags
-
+        //Sync
         if (array_key_exists('tags', $postData)) {
-
-            // dd($postData['tags']);
-            $newPost->tags()->sync($postData['tags']);
+            $newPost->tag()->sync($postData['tags']);
         }
-
 
         $newPost->save();
         return redirect()->route('admin.posts.index');
@@ -97,10 +103,12 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         $category = Category::find($post->category_id);
-        return view('admin.posts.show', compact('post', 'category'));
+        $tag = $post->tag;
+        return view('admin.posts.show', compact('post', 'category', 'tag'));
     }
 
     /**
+     * Show the form for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -109,7 +117,6 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         $categories = Category::all();
-
         $tags = Tag::all();
         return view('admin.posts.edit', compact('post', 'categories', 'tags'));
     }
@@ -127,18 +134,30 @@ class PostController extends Controller
             [
                 'title' => 'required|max:255',
                 'content' => 'required|min:8',
-                'category_id' => 'required|exists:categories,id'
+                'category_id' => 'required|exists:categories,id',
+                'tags[]' => 'exists:tags,id'
             ],
-
             [
-                'title.required' => 'you forgot the title.',
-                'content.min' => "you're almost there!",
-                'content.required' => 'you also forgot the content.',
+                'title.required' => 'LoL, you forgot the title.',
+                'content.min' => "C'mon man, you're almost there!",
+                'content.required' => 'LoL, you also forgot the content.',
                 'category_id.exists' => "Try again, this category doesn't exist."
             ]
         );
         $postData = $request->all();
+        //Image
+        if (array_key_exists('image', $postData)) {
+            if ($post->cover) {
+                Storage::delete($post->cover);
+            }
+            //Una volta che è stata cancellata l'immagine vecchia, carica quella nuova
+            $img_path = Storage::put('uploads', $postData['image']);
+            $postData['cover'] = $img_path;
+        }
+
         $post->fill($postData);
+
+        //Slug
         $slug = Str::slug($post->title);
         $alternativeSlug = $slug;
         $postFound = Post::where('slug', $alternativeSlug)->first();
@@ -149,11 +168,9 @@ class PostController extends Controller
             $postFound = Post::where('slug', $alternativeSlug)->first();
         }
         $post->slug = $alternativeSlug;
-
+        //Sync
         if (array_key_exists('tags', $postData)) {
-
-            // dd($postData['tags']);
-            $post->tags()->sync($postData['tags']);
+            $post->tag()->sync($postData['tags']);
         }
         $post->update();
         return redirect()->route('admin.posts.index');
@@ -165,14 +182,13 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
+        $post = Post::find($id);
+        $post->tag()->sync([]);
+        Storage::delete($post->cover);
+        $post->delete();
 
-        if ($post) {
-            $post->tags()->sync([]);
-            $post->delete();
-        }
-
-        return redirect()->route('admin.posts.index');
+        return redirect()->route('admin.posts.index', compact('post'));
     }
 }
