@@ -1,6 +1,11 @@
 <template>
-  <div>
-    {{ post.title }}
+  <div class="container">
+    <div class="d-flex flex-column">
+      <div v-for="(post, index) in posts" :key="index">
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.content }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -8,10 +13,10 @@
 export default {
   name: "PostCardComponent",
   props: {
-    post: Object,
+    posts: Array,
   },
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 </style>

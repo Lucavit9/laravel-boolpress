@@ -2,21 +2,21 @@
   <div class="container">
     <div class="row">
       <div class="col-12 text-center">My Posts</div>
-
       <div v-if="posts.length > 0">
-        <PostCardListComponent :posts="posts" />
+        <PostCardComponent :posts="posts" />
       </div>
-      <div v-else>caricamento in corso</div>
+      <div v-else>Caricamento in corso</div>
     </div>
   </div>
 </template>
 
 <script>
-import PostCardListComponent from "../components/PostCardListComponent.vue";
+import PostCardComponent from "../components/PostCardComponent";
 export default {
-  components: { PostCardListComponent },
   name: "BlogComponent",
-
+  components: {
+    PostCardComponent,
+  },
   data() {
     return {
       posts: [],
@@ -24,11 +24,11 @@ export default {
   },
   mounted() {
     window.axios
-      .get("/api/posts")
-      .then(({ status, data }) => {
-        console.log(data);
-        if (status === 200 && data.success) {
-          this.posts = data.results;
+      .get("http://127.0.0.1:8000/api/posts")
+      .then((results) => {
+        console.log(results);
+        if (results.status === 200 && results.data.success) {
+          this.posts = results.data.results;
         }
         console.log(this.posts);
       })
@@ -39,5 +39,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 </style>
+
+
