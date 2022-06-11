@@ -12,6 +12,8 @@ import NotFoundComponent from './pages/NotFoundComponent'
 
 import BlogComponent from './pages/BlogComponent'
 
+import SingleBlogComponent from './pages/SingleBlogComponent'
+
 import WhoWeAreComponent from './pages/WhoWeAreComponent'
 
 const router = new VueRouter({
@@ -26,6 +28,11 @@ const router = new VueRouter({
             path: '/blog',
             name: 'blog',
             component: BlogComponent
+        },
+        {
+            path: '/blog/:slug',
+            name: 'single-blog',
+            component: SingleBlogComponent
         },
         {
             path: '/who-we-are',
