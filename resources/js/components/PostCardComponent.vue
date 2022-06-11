@@ -4,6 +4,11 @@
       <div v-for="(post, index) in posts" :key="index">
         <h1>{{ post.title }}</h1>
         <p>{{ post.content }}</p>
+        <router-link :to="{ name: 'single-blog', params: { slug: post.slug } }"
+          >visualizza</router-link
+        >
+
+        >
       </div>
     </div>
   </div>
